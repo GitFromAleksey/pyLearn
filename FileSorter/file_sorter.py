@@ -2,19 +2,24 @@ import os
 
 sourseFileName = '1.txt'
 
-def findFile(fileName, dir):
+def findFile(dir):
+    print('in: ',dir)
+
     if os.path.isdir(dir):
-        print(' ', dir,' is dir')
         for ls in os.listdir(dir):
-            print(ls)
-            if os.path.isfile(ls):
-                print(ls + ' is file')
+            if os.path.isdir(ls):
+                print('dir: ', ls)
+                findFile(os.path.abspath(ls))
+            elif os.path.isfile(ls):
+                print('abspath: ', os.path.abspath(ls))
+                print('file: ',ls)
+
 
 def main():
     cwd = os.getcwd()
     print(cwd)
 
-    findFile('file', cwd)
+    findFile(cwd)
 
     # cwd = 'C:\Users\AMD\Desktop\Аня свадьба'.encode()
     # cwd = 'C:\Users\AMD\Desktop\Аня свадьба'
