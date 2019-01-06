@@ -19,7 +19,7 @@ def main():
     comPort.write(b'ATI\r')
     time.sleep(1)
     print('comPort2.read: ',comPort2.read(comPort2.in_waiting))
-
+  
     comPort.close()
 
 if __name__ == '__main__':
