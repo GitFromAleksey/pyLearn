@@ -120,8 +120,8 @@ def main():
 #     sourseFileName = '1.txt'
 #     sourseFileName = ''
 #     sourseFilePath = "C:\\Users\\AMD\\eclipse-workspace\\pyLearn\\FileSorter"
-    sourseFilePath = "C:\\Users\\AMD\\Desktop\\SouseFolder"
-    searchDirectory = 'C:\\Users\\AMD\\eclipse-workspace\\pyLearn\\FileSorter'
+    sourseFilePath = "C:\\Users\\HP-G7000\\Desktop\\Фото с телефона нужно переместить в базу"
+    searchDirectory = 'D:\\БазаФото'
     
 #     filePath = os.path.join(sourseFilePath, sourseFileName)
 
