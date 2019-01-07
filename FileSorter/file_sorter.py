@@ -5,17 +5,20 @@ import os
 
 def SaveResultToFile(fileFullPath, savingData):
 
-    saveFileName = os.path.splitext(fileFullPath)[0] + '.txt'
-    
-    print('Save result to file: ', saveFileName)
+    saveFileName = fileFullPath + '.res.txt'
+    writeStr = ''
     
     file = open(saveFileName, 'w')
 
-    if file:
-        for data in savingData:
-            file.write(data)
-    
-    file.close()
+    try:
+        if file:
+            for data in savingData:
+                writeStr += data +'\n'
+            file.write(writeStr)
+    except IOError:
+        print('IOerror')
+    finally:
+        file.close()
     
 
 def SearchSameFiles(searchFileFullPath, dirForFinding):
@@ -98,6 +101,15 @@ def PrintDir(dirPath):
             if os.path.isdir(ls):
                 print('is dir: ', ls)
 
+def GetAllFilesFromDir(sourseDir):
+    result = []
+    
+    if os.path.isdir(sourseDir):
+        for curDir, dirs, files in os.walk(sourseDir):
+            for file in files:
+                filePath = os.path.join(curDir,file)
+                result.append(filePath)
+    return result
 
 def main():
     print('os.name: ', os.name)
@@ -105,28 +117,29 @@ def main():
     cwd = os.getcwd()
     print('current dir: ', cwd)
 
+#     sourseFileName = '1.txt'
+#     sourseFileName = ''
 #     sourseFilePath = "C:\\Users\\AMD\\eclipse-workspace\\pyLearn\\FileSorter"
     sourseFilePath = "C:\\Users\\AMD\\Desktop\\SouseFolder"
+    searchDirectory = 'C:\\Users\\AMD\\eclipse-workspace\\pyLearn\\FileSorter'
     
-#     sourseFileName = '1.txt'
-    sourseFileName = 'L12.jpg'
-    
-    searchDirectory = 'C:\\Users\\AMD\\Desktop\\Аня свадьба'
-    
-    filePath = os.path.join(sourseFilePath, sourseFileName)
+#     filePath = os.path.join(sourseFilePath, sourseFileName)
 
-    findFilesList = SearchFileByName(filePath, searchDirectory)
-    print(findFilesList)
+    for sourseFileName in GetAllFilesFromDir(sourseFilePath):
+        print('sourseFileName: ',sourseFileName)
+        findFilesList = SearchFileBySize(sourseFileName, searchDirectory)
+        print('findFilesList: ',findFilesList)
+        if findFilesList:
+            SaveResultToFile(sourseFileName, findFilesList)
 
-    findFilesList = SearchFileBySize(filePath, searchDirectory)
-    print(findFilesList)
+#     findFilesList = SearchFileByName(filePath, searchDirectory)
+#     print(findFilesList)
 
-    SaveResultToFile(filePath, findFilesList)
+#     SaveResultToFile(filePath, findFilesList)
 
-    findFilesList = SearchSameFiles(filePath, searchDirectory)
-    print(findFilesList)
+#     findFilesList = SearchSameFiles(filePath, searchDirectory)
+#     print(findFilesList)
 
-    
 
 if __name__ == '__main__':
     main()
