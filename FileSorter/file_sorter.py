@@ -1,7 +1,38 @@
 # -*- coding: utf-8 -*-
 
 import os
+# from test.badsyntax_future3 import result
 # from fileinput import filename
+
+def CompareByFileContent(filePath1, filePath2):
+    print('Compare file', os.path.split(filePath1)[1], 'with',os.path.split(filePath2)[1], 'by content')
+    result = True
+        
+    if os.path.exists(filePath1) == False or os.path.exists(filePath1) == False:
+        result = False
+        return result
+    
+    file1 = open(filePath1, 'rb')
+    file2 = open(filePath2, 'rb')
+    
+    try:
+        byteFile1 = file1.read(1)
+        byteFile2 = file2.read(1)
+        while byteFile1 != b"" or byteFile2 != b"":
+            if byteFile1 != byteFile2:
+                result = False
+                return result
+            byteFile1 = file1.read(1)
+            byteFile2 = file2.read(1)
+    except IOError:
+        result = False
+        return result
+    finally:
+        file1.close()
+        file2.close()
+        
+    return result
+                        
 
 def SaveResultToFile(fileFullPath, savingData):
 
@@ -41,6 +72,10 @@ def SearchSameFiles(searchFileFullPath, dirForFinding):
     return result    
         
 
+
+
+
+
 def SearchFileBySize(searchFileFullPath, dirForFinding):
     print('Search by size')
     result = [] # list
@@ -58,7 +93,8 @@ def SearchFileBySize(searchFileFullPath, dirForFinding):
                 filePath = os.path.join(curDir,file)
                 fileSize = os.path.getsize(filePath)
                 if fileSize == searchFileSize:
-                    result.append(filePath)
+                    if CompareByFileContent(filePath, searchFileFullPath):
+                        result.append(filePath)
     return result
 
 def SearchFileByName(searchFileFullPath, dirForFinding):
@@ -120,13 +156,16 @@ def main():
 #     sourseFileName = '1.txt'
 #     sourseFileName = ''
 #     sourseFilePath = "C:\\Users\\AMD\\eclipse-workspace\\pyLearn\\FileSorter"
-    sourseFilePath = "C:\\Users\\HP-G7000\\Desktop\\Фото с телефона нужно переместить в базу"
+    sourseFilePath = "C:\\Users\\HP-G7000\\Desktop\\test"
     searchDirectory = 'D:\\БазаФото'
     
 #     filePath = os.path.join(sourseFilePath, sourseFileName)
-
-    for sourseFileName in GetAllFilesFromDir(sourseFilePath):
+    fileCounter = 0;
+    allFiles = GetAllFilesFromDir(sourseFilePath)
+    for sourseFileName in allFiles:
+        print('File No:', fileCounter, 'of', len(allFiles))
         print('sourseFileName: ',sourseFileName)
+        fileCounter += 1
         findFilesList = SearchFileBySize(sourseFileName, searchDirectory)
         print('findFilesList: ',findFilesList)
         if findFilesList:
@@ -139,6 +178,8 @@ def main():
 
 #     findFilesList = SearchSameFiles(filePath, searchDirectory)
 #     print(findFilesList)
+
+    print('\nEnd of program.')
 
 
 if __name__ == '__main__':
