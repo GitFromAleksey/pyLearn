@@ -1,39 +1,55 @@
+# -*- coding: utf-8 -*-
+
 import os
 # from fileinput import filename
 
+def SaveResultToFile(fileFullPath, savingData):
 
-def SearchSameFiles(searchFile, sourseDir):
+    saveFileName = os.path.splitext(fileFullPath)[0] + '.txt'
+    
+    print('Save result to file: ', saveFileName)
+    
+    file = open(saveFileName, 'w')
+
+    if file:
+        for data in savingData:
+            file.write(data)
+    
+    file.close()
+    
+
+def SearchSameFiles(searchFileFullPath, dirForFinding):
     print('Search same files')
     result = [] # list
 
-    searchFilePath = os.path.split(searchFile)[0]
-    searchFileName = os.path.split(searchFile)[1]
+    searchFilePath = os.path.split(searchFileFullPath)[0]
+    searchFileName = os.path.split(searchFileFullPath)[1]
     
     os.chdir(searchFilePath)
     searchFileSize = os.path.getsize(searchFileName)
 
-    if os.path.isdir(sourseDir):
-        for curDir, dirs, files in os.walk(sourseDir):
+    if os.path.isdir(dirForFinding):
+        for curDir, dirs, files in os.walk(dirForFinding):
             for file in files:
                 filePath = os.path.join(curDir,file)
-                if os.path.samefile(filePath, searchFile):
+                if os.path.samefile(filePath, searchFileFullPath):
                     result.append(filePath)
                     print('same files')
     return result    
         
 
-def SearchFileBySize(searchFile, sourseDir):
+def SearchFileBySize(searchFileFullPath, dirForFinding):
     print('Search by size')
     result = [] # list
 
-    searchFilePath = os.path.split(searchFile)[0]
-    searchFileName = os.path.split(searchFile)[1]
+    searchFilePath = os.path.split(searchFileFullPath)[0]
+    searchFileName = os.path.split(searchFileFullPath)[1]
     
     os.chdir(searchFilePath)
     searchFileSize = os.path.getsize(searchFileName)
 
-    if os.path.isdir(sourseDir):
-        for curDir, dirs, files in os.walk(sourseDir):
+    if os.path.isdir(dirForFinding):
+        for curDir, dirs, files in os.walk(dirForFinding):
             for file in files:
                 os.chdir(curDir)
                 filePath = os.path.join(curDir,file)
@@ -42,15 +58,20 @@ def SearchFileBySize(searchFile, sourseDir):
                     result.append(filePath)
     return result
 
-
-def SearchFileByName(fileName,sourseDir):
+def SearchFileByName(searchFileFullPath, dirForFinding):
     print('Search by name')
     result = [] # list
 
-    if os.path.isdir(sourseDir):
-        for curDir, dirs, files in os.walk(sourseDir):
+    searchFilePath = os.path.split(searchFileFullPath)[0]
+    searchFileName = os.path.split(searchFileFullPath)[1]
+    
+    os.chdir(searchFilePath)
+    searchFileSize = os.path.getsize(searchFileName)
+
+    if os.path.isdir(dirForFinding):
+        for curDir, dirs, files in os.walk(dirForFinding):
             for file in files:
-                if fileName == file:
+                if searchFileName == file:
                     filePath = os.path.join(curDir,file)
                     result.append(filePath)
     return result
@@ -79,25 +100,33 @@ def PrintDir(dirPath):
 
 
 def main():
-    path_ = "C:\\Users\\AMD\\eclipse-workspace\\pyLearn\\FileSorter"
-    sourseFileName = '1.txt'
-    
     print('os.name: ', os.name)
     print('os.altsep: ', os.altsep)
-
     cwd = os.getcwd()
     print('current dir: ', cwd)
+
+#     sourseFilePath = "C:\\Users\\AMD\\eclipse-workspace\\pyLearn\\FileSorter"
+    sourseFilePath = "C:\\Users\\AMD\\Desktop\\SouseFolder"
     
-    filePath = os.path.join(path_, sourseFileName)
+#     sourseFileName = '1.txt'
+    sourseFileName = 'L12.jpg'
+    
+    searchDirectory = 'C:\\Users\\AMD\\Desktop\\Аня свадьба'
+    
+    filePath = os.path.join(sourseFilePath, sourseFileName)
 
-    findFilesList = SearchFileByName(sourseFileName, cwd)
+    findFilesList = SearchFileByName(filePath, searchDirectory)
     print(findFilesList)
 
-    findFilesList = SearchFileBySize(filePath, path_)
+    findFilesList = SearchFileBySize(filePath, searchDirectory)
     print(findFilesList)
 
-    findFilesList = SearchSameFiles(filePath, path_)
+    SaveResultToFile(filePath, findFilesList)
+
+    findFilesList = SearchSameFiles(filePath, searchDirectory)
     print(findFilesList)
+
+    
 
 if __name__ == '__main__':
     main()
