@@ -14,10 +14,12 @@ def main():
 
     try:
         port.open()
-        while True:
-            print(port.read(port.inWaiting()))
-            port.write(b'Hello from PC to STM32\r\n')
-            time.sleep(0.5)
+        # while True:
+
+        # port.write(b'Hello from PC to STM32\r\n')
+        port.write([0x1B, 0x01, 0x00, 0x00])
+        time.sleep(1)
+        print(port.read(port.inWaiting()))
     except IOError:
         print('IOError: Port closing')
         port.close()
