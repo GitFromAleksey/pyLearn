@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk
 
 MOUSE_BTN = '<Button-'
 MOUSE_LEFT_BTN = MOUSE_BTN+'1>'
@@ -9,13 +10,37 @@ MOUSE_SCROLL_BTN = MOUSE_BTN+'2>'
 
 class Block:
     'Class description'
-    def __init__(self, window):
+    def __init__(self):
         'Class Block constructor'
-        self.win = window
-        self.label_add(window)
-        self.button_add(window)
-        self.entry_add(window)
-        self.tex_box_add(window)
+        self.win = tk.Tk()
+        self.win.geometry('800x600')
+
+        self.optionsmenu_add(self.win)
+        self.label_add(self.win)
+        self.button_add(self.win)
+        self.entry_add(self.win)
+        self.tex_box_add(self.win)
+        self.combobox_add(self.win)
+        self.win.mainloop()
+        
+
+    def optionsmenu_add(self, win):
+        self.optionlist = ['one','two','three']
+        veriable = tk.StringVar(win)
+        veriable.set('123')
+        self.combo = tk.OptionMenu(
+            win,
+            veriable,
+            *self.optionlist)
+        self.combo.pack()
+        self.combo.place(x = 300, y = 0, width = 100)
+##        self.combo.
+##
+    def combobox_add(self, win):
+        print('add combo')
+        self.cmbb = ttk.Combobox(self.win, values = ['0','1','2'])
+        self.cmbb.pack(padx=0, pady=50)
+        
 
     def label_add(self, win):
         self.lbl = tk.Label(
@@ -23,24 +48,25 @@ class Block:
             text = 'LABEL',
             foreground = 'white',
             background = 'black',
-            width = 50,
-            height = 10)
-        self.lbl.pack()
+            width = 10,
+            height = 1)
+        self.lbl.pack()#(side = 'left')
+        self.lbl.place(x = 0, y = 0, width = 50, height = 25,)
 
     def button_add(self, win):
         self.btn = tk.Button(
             win,
             text = 'BUTTON',
-            width = 25,
-            height = 5,
             bg = 'blue',
             fg = 'yellow')
         self.btn.bind(MOUSE_LEFT_BTN, self.btn_press_evt)
         self.btn.pack()
+        self.btn.place(x = 100, y = 0, width = 50, height = 25,)
 
     def entry_add(self, win):
         self.entry = tk.Entry()
         self.entry.pack()
+        self.entry.place(x = 200, y = 0, width = 50, height = 25)
 ##        self.entry.insert(0,'text')
 ##        self.name = entry.get()
 
@@ -53,11 +79,10 @@ class Block:
 ##        self.scroll = tk.Scrollbar(command = self.text_box.yview)
 ##        self.scroll.pack(side = LEFT, fill = Y)
         self.text_box.pack(side = LEFT)
-
-        scroll = tk.Scrollbar(command = self.text_box.yview)
-        scroll.pack(side = LEFT, fill = Y)
-
-        self.text_box.config(yscrollcommand = scroll.set)
+        self.text_box.place(x = 0, y = 100, width = 500, height = 250)
+##        scroll = tk.Scrollbar(command = self.text_box.yview)
+##        scroll.pack(side = LEFT, fill = Y)
+##        self.text_box.config(yscrollcommand = scroll.set)
 
     def btn_press_evt(self, event):
         entry_text = self.entry.get()
@@ -67,6 +92,7 @@ class Block:
         self.text_box.insert(1.0,text)
         print(text)
         print(event)
+        self.combobox_set_opt(text)
 ##        self.win.withdraw() # скрыть окно
 
 
@@ -76,13 +102,13 @@ def main():
     print(Block.__doc__)
     print(Block.__init__.__doc__)
     
-    window = tk.Tk()
-    window.title('title')
+##    window = tk.Tk()
+##    window.title('title')
 
-    block = Block(window)
-    print(dir(block))
+    block = Block()
+##    print(dir(block))
     
-    window.mainloop()
+##    window.mainloop()
 ## ---------------------------------------------------------------------
 ##    frame = tk.Frame()
 ##    
