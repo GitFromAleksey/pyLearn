@@ -38,9 +38,23 @@ class Block:
 ##
     def combobox_add(self, win):
         print('add combo')
+        
         self.cmbb = ttk.Combobox(self.win, values = ['0','1','2'])
         self.cmbb.pack(padx=0, pady=50)
-        
+        self.cmbb.bind('<<ComboboxSelected>>', self.ComboSelectedEvt)
+        self.cmbb.current(1)
+        print(self.cmbb.current())
+        print(self.cmbb.get())
+
+    def ComboSelectedEvt(self,event):
+        print('ComboSelectedEvt:', event)
+        print(self.cmbb.get())
+
+    def ComboAddItem(self, item):
+        vals = list(self.cmbb['values'])
+        vals.append(item)
+        self.cmbb['values'] = vals
+        print(self.cmbb['values'])
 
     def label_add(self, win):
         self.lbl = tk.Label(
@@ -80,9 +94,9 @@ class Block:
 ##        self.scroll.pack(side = LEFT, fill = Y)
         self.text_box.pack(side = LEFT)
         self.text_box.place(x = 0, y = 100, width = 500, height = 250)
-##        scroll = tk.Scrollbar(command = self.text_box.yview)
-##        scroll.pack(side = LEFT, fill = Y)
-##        self.text_box.config(yscrollcommand = scroll.set)
+        scroll = tk.Scrollbar(command = self.text_box.yview)
+        scroll.pack(side = RIGHT, fill = Y)
+        self.text_box.config(yscrollcommand = scroll.set)
 
     def btn_press_evt(self, event):
         entry_text = self.entry.get()
@@ -90,9 +104,9 @@ class Block:
         self.text_box.delete(1.0, END)
         text = text + entry_text
         self.text_box.insert(1.0,text)
+        self.ComboAddItem(text)
         print(text)
         print(event)
-        self.combobox_set_opt(text)
 ##        self.win.withdraw() # скрыть окно
 
 
