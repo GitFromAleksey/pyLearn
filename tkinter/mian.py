@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
+import threading
 
 MOUSE_BTN = '<Button-'
 MOUSE_LEFT_BTN = MOUSE_BTN+'1>'
@@ -8,9 +9,10 @@ MOUSE_RIGHT_BTN = MOUSE_BTN+'3>'
 MOUSE_SCROLL_BTN = MOUSE_BTN+'2>'
 
 
-class Block:
+class Block(threading.Thread):
     'Class description'
     def __init__(self):
+        super().__init__(name = 'form')
         'Class Block constructor'
         self.win = tk.Tk()
         self.win.geometry('800x600')
@@ -21,8 +23,10 @@ class Block:
         self.entry_add(self.win)
         self.tex_box_add(self.win)
         self.combobox_add(self.win)
+##        self.win.mainloop()
+
+    def run(self):
         self.win.mainloop()
-        
 
     def optionsmenu_add(self, win):
         self.optionlist = ['one','two','three']
@@ -120,7 +124,7 @@ def main():
 ##    window.title('title')
 
     block = Block()
-##    print(dir(block))
+    print('a')
     
 ##    window.mainloop()
 ## ---------------------------------------------------------------------
