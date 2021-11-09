@@ -1,20 +1,6 @@
 import re
 
 
-##7. wifi_send_frame_ok: wifi_send_frame_ok: send OK OK
-##10. wifi_parse_pack_from_serv: wifi_parse_pack_from_serv: sync time 1635149479
-##13. wifi_updater_proc: wifi_updater_proc: auto check start
-##14. __get_header_for_dev : __get_header_for_dev: no firm header for 0x1001
-##15. FU_is_required_main_update: FU_is_required_main_update: update not required
-##17. FIND CHAN: FIND CHAN: delete bs 2F:30:09:37:20:51 from chan=1
-##18. __set_prio_chan: __set_prio_chan: beac T=250, slot=65
-##19. rf_api_rx_pack_proc: rf_api_rx_pack_proc: err sequence pack, exp=0, read=37
-##20. __chan_proc: __chan_proc: scan 868 channel - set 0 chan
-##21. rf_task: rf_task: set prio ch 0...
-##23. CHAN STAT: CHAN STAT:chan=2,IAM 74:33:1D:34:25:51
-##24. warden_task: warden_task: in heap less 68428
-##26. aes128_decrypt: aes128_decrypt: err len 24
-
 text_list = []
 text_list.append(r'[FLTR1]cz_task: czidx=1, czid=860049889, numTH=1: T=25.61, H=22.7, numCO2=1: CO2=526.0, TMCU=53.71, TMB=39.88, numPM=0, pm1p0=65535, pm2p5=65535, pm10=65535')
 text_list.append(r'upd: sm=0, idle, DT=0x0000, MAC-0a:34:56:78:9A:BC, prg=0%')
