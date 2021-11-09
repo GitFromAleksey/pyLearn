@@ -2,3 +2,4 @@
 .pydevproject
 *.pyc
 *.bat
+*.tmp
