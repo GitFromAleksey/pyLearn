@@ -22,10 +22,10 @@ class Server():
             try:
                 client, address = server.accept()
                 clients.append(client)
-##                print(f'Server new client: {client}, address: {address}')
-##                self.SendMsg(client, 'Connection accepted!!!'.encode('utf-8'))
+                print(f'Server new client: {client}, address: {address}')
                 thr = threading.Thread(target = self.Receiver, args = (client, address))
                 thr.start()
+                self.SendMsg(client, 'Connection accepted!!!'.encode('utf-8'))
             except:
                 pass
 
@@ -44,14 +44,16 @@ class Server():
                 if len(msg) > 0:
                     msg = msg.decode('utf-8')
                     print(f'Server receive from {address}: {msg}')
-##                    self.SendMsg(client, msg)
-                    BroadcastSend(msg)
+                    self.SendMsg(client, msg)
+##                    BroadcastSend(msg)
                 else:
+                    print(f'Server close client: {client}\n')
                     client.close()
                     self.clients.remove(client)
                     break
-                    print(f'Server close client: {client}\n')
+                    
             except:
+                print(f'Server Receiver except\n')
                 client.close()
                 self.clients.remove(client)
                 break

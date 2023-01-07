@@ -15,11 +15,12 @@ class Client():
         self.client = None
         
     def SendMsg(self, msg):
-        msg = msg.encode('utf-8')
-        print(f'Sending message: "{msg.decode("utf-8")}"')
+        print(f'Sending message: "{msg}"')
         try:
+            msg = msg.encode('utf-8')
             self.client.send(msg)
         except:
+            print(f'SendMsg except')
             pass
 
     def Receiver(self):
@@ -31,7 +32,7 @@ class Client():
                 msg = msg.decode('utf-8')
                 print(f'Client receive:{msg}')
             except:
-##                self.Disconnect()
+                self.Disconnect()
                 print(f'Client Receiver break\n')
                 break
 
