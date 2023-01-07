@@ -9,6 +9,7 @@ PORT = 8001 # https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 class Server():
 
     def __init__(self, host = HOST, port = PORT):
+        print(f'host: {host}, port: {port}')
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host,port))
         self.server.listen()
@@ -60,7 +61,7 @@ def main():
     ip = input('Enter server IP:')
     if len(ip) == 0:
         ip = HOST
-    server = Server(host = HOST, port = PORT)
+    server = Server(host = ip, port = PORT)
 
     while True:
         time.sleep(1)
