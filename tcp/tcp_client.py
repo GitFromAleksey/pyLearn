@@ -4,6 +4,7 @@ import threading
 
 
 HOST = '127.0.0.1'
+##HOST = '192.168.1.30'
 PORT = 8001 # https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 
 
@@ -30,7 +31,7 @@ class Client():
                 msg = msg.decode('utf-8')
                 print(f'Client receive:{msg}')
             except:
-                self.Disconnect()
+##                self.Disconnect()
                 print(f'Client Receiver break\n')
                 break
 
@@ -47,7 +48,20 @@ class Client():
         self.client.close()
 
 def main():
-    pass
+    ip = input('Enter server IP:')
+    if len(ip) == 0:
+        ip = HOST
+
+    client = Client(host = ip)
+    client.Connect()
+
+    i = 10
+    while i > 0:
+        client.SendMsg(f'msg: {i}')
+        time.sleep(1)
+        i -= 1
+
+    client.Disconnect()
     
 
 if __name__ == '__main__':

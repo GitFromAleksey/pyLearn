@@ -57,9 +57,14 @@ class Server():
                 pass
 
 def main():
-
+    ip = input('Enter server IP:')
+    if len(ip) == 0:
+        ip = HOST
     server = Server(host = HOST, port = PORT)
-    
+
+    while True:
+        time.sleep(1)
+##        input()
 
 if __name__ == '__main__':
     main()
