@@ -13,7 +13,11 @@ class Client():
     def __init__(self, host = HOST, port = PORT):
         self.SERVER = (host,port)
         self.client = None
-         
+        self.RcvEvtCb = None
+
+    def SetReceiveEventCallBack(self, rcv_evnt_cb):
+        self.RcvEvtCb = rcv_evnt_cb
+    
     def SendMsg(self, msg):
         print(f'Sending message: "{msg}"')
         try:
@@ -25,11 +29,12 @@ class Client():
     def Receiver(self):
         while True:
             try:
-                msg = self.client.recv(1024)
+                msg = self.client.recv(1024) # recvfrom(1024)
                 if len(msg) == 0:
                     continue
                 msg = msg.decode('utf-8')
-                print(f'Client receive: {msg}')
+##                print(f'Client receive: {msg}')
+                self.RcvEvtCb(message = msg)
             except:
                 self.Disconnect()
                 print(f'Client Receiver break\n')
@@ -47,12 +52,16 @@ class Client():
     def Disconnect(self):
         self.client.close()
 
+def ReceiveEvebtCallBack(**kwargs):
+    print(f'ReceiveEvebtCallBack: {kwargs}')
+
 def main():
     ip = input('Enter server IP:')
     if len(ip) == 0:
         ip = HOST
 
     client = Client(host = ip)
+    client.SetReceiveEventCallBack(ReceiveEvebtCallBack)
     client.Connect()
 
     i = 10

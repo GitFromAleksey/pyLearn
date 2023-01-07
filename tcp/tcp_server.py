@@ -10,12 +10,16 @@ class Server():
 
     def __init__(self, host = HOST, port = PORT):
         print(f'host: {host}, port: {port}')
+        self.RcvEvtCb = None
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host,port))
         self.server.listen()
         self.clients = []
         thr = threading.Thread(target = self.Accepter, args = (self.server, self.clients))
         thr.start()
+
+    def SetReceiveEventCallBack(self, rcv_evnt_cb):
+        self.RcvEvtCb = rcv_evnt_cb
 
     def Accepter(self, server, clients):
         while True:
@@ -53,6 +57,10 @@ class Server():
                 if len(msg) > 0:
                     msg = msg.decode('utf-8')
                     print(f'Server receive from {address}: {msg}')
+                    _ip, _port = client.getpeername()
+                    self.RcvEvtCb(ip = _ip,
+                                  port = _port,
+                                  message = msg)
                     self.SendMsg(client, msg)
                     self.BroadcastSend(msg)
                 else:
@@ -68,13 +76,20 @@ class Server():
 ##                client.close()
 ##                self.clients.remove(client)
                 break
-                
+
+def ReceiveEvebtCallBack(**kwargs):
+    print(f'ReceiveEvebtCallBack: {kwargs}')
 
 def main():
+    hname = socket.gethostname()
+    print(hname)
+    ip = socket.gethostbyname(hname)
+    print(ip)
     ip = input('Enter server IP:')
     if len(ip) == 0:
         ip = HOST
     server = Server(host = ip, port = PORT)
+    server.SetReceiveEventCallBack(ReceiveEvebtCallBack)
 
     while True:
         time.sleep(1)
