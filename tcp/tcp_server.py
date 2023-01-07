@@ -21,21 +21,24 @@ class Server():
         while True:
             try:
                 client, address = server.accept()
-                clients.append(client)
+                self.clients.append(client)
                 print(f'Server new client: {client}, address: {address}')
                 thr = threading.Thread(target = self.Receiver, args = (client, address))
                 thr.start()
-                self.SendMsg(client, 'Connection accepted!!!'.encode('utf-8'))
+##                self.SendMsg(client, 'Connection accepted!!!'.encode('utf-8'))
+                self.BroadcastSend(f'New client accepted: {address}')
             except:
                 pass
 
     def BroadcastSend(self, msg):
-        msg = msg.encode('utf-8')
         for client in self.clients:
-            SendMsg(self, client, msg)
+            self.SendMsg(client, msg)
 
     def SendMsg(self, client, msg):
-        client.send(msg.encode('utf-8'))
+        try:
+            client.send(msg.encode('utf-8'))
+        except:
+            print(f'SendMsg except')
 
     def Receiver(self, client, address):
         while True:            
@@ -44,8 +47,8 @@ class Server():
                 if len(msg) > 0:
                     msg = msg.decode('utf-8')
                     print(f'Server receive from {address}: {msg}')
-                    self.SendMsg(client, msg)
-##                    BroadcastSend(msg)
+##                    self.SendMsg(client, msg)
+                    self.BroadcastSend(msg)
                 else:
                     print(f'Server close client: {client}\n')
                     client.close()

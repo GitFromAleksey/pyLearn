@@ -13,7 +13,7 @@ class Client():
     def __init__(self, host = HOST, port = PORT):
         self.SERVER = (host,port)
         self.client = None
-        
+         
     def SendMsg(self, msg):
         print(f'Sending message: "{msg}"')
         try:
@@ -21,7 +21,6 @@ class Client():
             self.client.send(msg)
         except:
             print(f'SendMsg except')
-            pass
 
     def Receiver(self):
         while True:
