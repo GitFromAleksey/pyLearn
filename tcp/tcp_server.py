@@ -30,7 +30,13 @@ class Server():
             except:
                 pass
 
+    def RemoveClient(self, client):
+        print(f'Remove client: {client}\n')
+        client.close()
+        self.clients.remove(client)
+
     def BroadcastSend(self, msg):
+        msg = 'Broadcast server message: ' + msg
         for client in self.clients:
             self.SendMsg(client, msg)
 
@@ -47,20 +53,22 @@ class Server():
                 if len(msg) > 0:
                     msg = msg.decode('utf-8')
                     print(f'Server receive from {address}: {msg}')
-##                    self.SendMsg(client, msg)
+                    self.SendMsg(client, msg)
                     self.BroadcastSend(msg)
                 else:
-                    print(f'Server close client: {client}\n')
-                    client.close()
-                    self.clients.remove(client)
+                    self.RemoveClient(client)
+##                    print(f'Server close client: {client}\n')
+##                    client.close()
+##                    self.clients.remove(client)
                     break
                     
             except:
-                print(f'Server Receiver except\n')
-                client.close()
-                self.clients.remove(client)
+                self.RemoveClient(client)
+##                print(f'Server Receiver except\n')
+##                client.close()
+##                self.clients.remove(client)
                 break
-                pass
+                
 
 def main():
     ip = input('Enter server IP:')

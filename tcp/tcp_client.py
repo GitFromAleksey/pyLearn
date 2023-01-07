@@ -29,7 +29,7 @@ class Client():
                 if len(msg) == 0:
                     continue
                 msg = msg.decode('utf-8')
-                print(f'Client receive:{msg}')
+                print(f'Client receive: {msg}')
             except:
                 self.Disconnect()
                 print(f'Client Receiver break\n')
