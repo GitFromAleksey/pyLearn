@@ -58,9 +58,10 @@ class Server():
                     msg = msg.decode('utf-8')
                     print(f'Server receive from {address}: {msg}')
                     _ip, _port = client.getpeername()
-                    self.RcvEvtCb(ip = _ip,
-                                  port = _port,
-                                  message = msg)
+                    if self.RcvEvtCb != None:
+                        self.RcvEvtCb(ip = _ip,
+                                      port = _port,
+                                      message = msg)
                     self.SendMsg(client, msg)
                     self.BroadcastSend(msg)
                 else:

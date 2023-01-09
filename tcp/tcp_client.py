@@ -34,7 +34,8 @@ class Client():
                     continue
                 msg = msg.decode('utf-8')
 ##                print(f'Client receive: {msg}')
-                self.RcvEvtCb(message = msg)
+                if self.RcvEvtCb != None:
+                    self.RcvEvtCb(message = msg)
             except:
                 self.Disconnect()
                 print(f'Client Receiver break\n')
