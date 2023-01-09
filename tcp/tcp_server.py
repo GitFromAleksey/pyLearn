@@ -63,19 +63,13 @@ class Server():
                                       port = _port,
                                       message = msg)
                     self.SendMsg(client, msg)
-                    self.BroadcastSend(msg)
+                    self.BroadcastSend(f'{msg} from {address}')
                 else:
                     self.RemoveClient(client)
-##                    print(f'Server close client: {client}\n')
-##                    client.close()
-##                    self.clients.remove(client)
                     break
                     
             except:
                 self.RemoveClient(client)
-##                print(f'Server Receiver except\n')
-##                client.close()
-##                self.clients.remove(client)
                 break
 
 def ReceiveEvebtCallBack(**kwargs):
