@@ -1,5 +1,5 @@
 from tcp_client import Client
-from tcp_server import Server
+##from tcp_server import Server
 import time
 
 
@@ -11,7 +11,11 @@ def ReceiveEvebtCallBack(**kwargs):
 
 def main():
 
-    client = Client(host = HOST, port = PORT)
+    ip = input('Enter server IP:')
+    if len(ip) == 0:
+        ip = HOST
+
+    client = Client(host = ip, port = PORT)
     client.SetReceiveEventCallBack(ReceiveEvebtCallBack)
 
     client.Connect()

@@ -68,8 +68,8 @@ class Server():
                         self.RcvEvtCb(ip = _ip,
                                       port = _port,
                                       message = msg)
-                    self.SendMsg(client, msg)
-                    self.BroadcastSend(f'{msg} from {address}')
+##                    self.SendMsg(client, msg)
+##                    self.BroadcastSend(f'{msg} from {address}')
                 else:
                     self.RemoveClient(client)
                     break
@@ -92,10 +92,13 @@ def main():
     server = Server(host = ip, port = PORT)
     server.SetReceiveEventCallBack(ReceiveEvebtCallBack)
     server.Start()
-    server.Stop()
+
     while True:
         time.sleep(1)
-##        input()
+##        if input() == 'q':
+##            break
+    server.Stop()
+
 
 if __name__ == '__main__':
     main()

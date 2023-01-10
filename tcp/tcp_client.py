@@ -34,8 +34,8 @@ class Client():
                     continue
                 msg = msg.decode('utf-8')
 ##                print(f'Client receive: {msg}')
-                if self.RcvEvtCb != None:
-                    self.RcvEvtCb(message = msg)
+##                if self.RcvEvtCb != None:
+##                    self.RcvEvtCb(message = msg)
             except:
                 self.Disconnect()
                 print(f'Client Receiver break\n')
@@ -48,6 +48,7 @@ class Client():
             thr = threading.Thread(target = self.Receiver)
             thr.start()
         except socket.error as serr:
+            self.Disconnect()
             print(f'Client connect error: {serr}')
         
     def Disconnect(self):
