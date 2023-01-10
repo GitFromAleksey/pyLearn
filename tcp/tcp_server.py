@@ -10,13 +10,20 @@ class Server():
 
     def __init__(self, host = HOST, port = PORT):
         print(f'host: {host}, port: {port}')
+        self.clients = []
         self.RcvEvtCb = None
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host,port))
+
+    def Start(self):
+        print(f'Start tcp server.')
         self.server.listen()
-        self.clients = []
         thr = threading.Thread(target = self.Accepter, args = (self.server, self.clients))
         thr.start()
+
+    def Stop(self):
+        print(f'Stop tcp server.')
+        self.server.close()
 
     def SetReceiveEventCallBack(self, rcv_evnt_cb):
         self.RcvEvtCb = rcv_evnt_cb
@@ -29,7 +36,6 @@ class Server():
                 print(f'Server new client: {client}, address: {address}')
                 thr = threading.Thread(target = self.Receiver, args = (client, address))
                 thr.start()
-##                self.SendMsg(client, 'Connection accepted!!!'.encode('utf-8'))
                 self.BroadcastSend(f'New client accepted: {address}')
             except:
                 pass
@@ -85,7 +91,8 @@ def main():
         ip = HOST
     server = Server(host = ip, port = PORT)
     server.SetReceiveEventCallBack(ReceiveEvebtCallBack)
-
+    server.Start()
+    server.Stop()
     while True:
         time.sleep(1)
 ##        input()
