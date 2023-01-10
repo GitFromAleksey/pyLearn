@@ -36,7 +36,7 @@ class Server():
                 print(f'Server new client: {client}, address: {address}')
                 thr = threading.Thread(target = self.Receiver, args = (client, address))
                 thr.start()
-                self.BroadcastSend(f'New client accepted: {address}')
+##                self.BroadcastSend(f'New client accepted: {address}')
             except:
                 pass
 
@@ -46,12 +46,13 @@ class Server():
         self.clients.remove(client)
 
     def BroadcastSend(self, msg):
-        msg = 'Broadcast server message: ' + msg
+##        msg = 'Broadcast server message: ' + msg
         for client in self.clients:
             self.SendMsg(client, msg)
 
     def SendMsg(self, client, msg):
         try:
+##            print(f'SendMsg: {client}, {msg}')
             client.send(msg.encode('utf-8'))
         except:
             print(f'SendMsg except')
@@ -60,9 +61,10 @@ class Server():
         while True:            
             try:
                 msg = client.recv(1024)
-                if len(msg) > 0:
+##                if len(msg) > 0:
+                if msg:
                     msg = msg.decode('utf-8')
-                    print(f'Server receive from {address}: {msg}')
+##                    print(f'Server receive from {address}: {msg}')
                     _ip, _port = client.getpeername()
                     if self.RcvEvtCb != None:
                         self.RcvEvtCb(ip = _ip,
@@ -74,7 +76,8 @@ class Server():
                     self.RemoveClient(client)
                     break
                     
-            except:
+            except ConnectionResetError:
+                print(f'Server Receiver except')
                 self.RemoveClient(client)
                 break
 

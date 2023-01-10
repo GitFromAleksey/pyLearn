@@ -1,11 +1,16 @@
-##from tcp_client import Client
 from tcp_server import Server
 import time
+import json
 
 
 HOST = '127.0.0.1'
 PORT = 8001 # https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 
+def ReceiveEvebtCallBack(**kwargs):
+##    print(f'Server ReceiveEvebtCallBack: {kwargs}')
+    print(f'Client ip: {kwargs["ip"]}')
+    print(f'Client port: {kwargs["port"]}')
+    print(f'Client message: {kwargs["message"]}')
 
 def main():
 
@@ -14,20 +19,19 @@ def main():
         ip = HOST
 
     server = Server(host = ip, port = PORT)
+    server.SetReceiveEventCallBack(ReceiveEvebtCallBack)
     server.Start()
-##    client = Client(host = HOST, port = PORT)
-##    client_1 = Client(host = HOST, port = PORT)
-
-##    client.Connect()
-##    client_1.Connect()
 
     while True:
-        if input('q - exit :>> ') == 'q':
+##        if input('q - exit :>> ') == 'q':
+##            break
+        msg = input('Input message or "q" for exit :>> ')
+        if  msg == 'q':
             break
+        else:
+            server.BroadcastSend(msg)
 
-##    client.Disconnect()
-##    client_1.Disconnect()
-    
+    server.Stop()
 
 if __name__ == '__main__':
     main()

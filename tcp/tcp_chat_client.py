@@ -1,5 +1,5 @@
 from tcp_client import Client
-##from tcp_server import Server
+import json
 import time
 
 
@@ -7,7 +7,8 @@ HOST = '127.0.0.1'
 PORT = 8001 # https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 
 def ReceiveEvebtCallBack(**kwargs):
-    print(f'\nReceiveEvebtCallBack: {kwargs}\n')
+##    print(f'\nClient ReceiveEvebtCallBack: {kwargs}\n')
+    print(f'\nServer message: {kwargs["message"]}\n')
 
 def main():
 

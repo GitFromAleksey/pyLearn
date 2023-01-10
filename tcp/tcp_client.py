@@ -19,7 +19,7 @@ class Client():
         self.RcvEvtCb = rcv_evnt_cb
     
     def SendMsg(self, msg):
-        print(f'Sending message: "{msg}"')
+##        print(f'Sending message: "{msg}"')
         try:
             msg = msg.encode('utf-8')
             self.client.send(msg)
@@ -32,10 +32,11 @@ class Client():
                 msg = self.client.recv(1024) # recvfrom(1024)
                 if len(msg) == 0:
                     continue
-                msg = msg.decode('utf-8')
+                if msg:
+                    msg = msg.decode('utf-8')
 ##                print(f'Client receive: {msg}')
-##                if self.RcvEvtCb != None:
-##                    self.RcvEvtCb(message = msg)
+                    if self.RcvEvtCb != None:
+                        self.RcvEvtCb(message = msg)
             except:
                 self.Disconnect()
                 print(f'Client Receiver break\n')
