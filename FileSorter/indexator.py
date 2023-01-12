@@ -1,14 +1,14 @@
 import os
 import time
 import hashlib
+import json
 
-
-PATH = 'E:\НовыеФото\АринаСадикНовыйГод12.2021' #'E:\базафото' #'E:\НовыеФото\WhatsApp Video'
+PATH = 'E:\НовыеФото\МаминаФлэшка' #'E:\базафото' #'E:\НовыеФото\WhatsApp Video'
 
 INFO_PATH          = 'Path'
 INFO_SIZE          = 'Size'
 INFO_NAME          = 'Name'
-INFO_FILE_EXT      = 'file_ext'
+INFO_FILE_EXT      = 'File_ext'
 INFO_PERMISSIONS   = 'Permissions'
 INFO_OWNER         = 'Owner'
 INFO_DEVICE        = 'Device'
@@ -34,9 +34,18 @@ class cIndexator:
         for key in self.ext_dict:
             print(f'"{key}": {self.ext_dict[key]}')
 
+    def SaveIndexingData(self):
+        fname = PATH + '\\' + 'index.json'
+        f_json = open(fname,'w', encoding='utf-8')
+        json_string = json.dump(self.files_info_list, f_json, ensure_ascii = False, indent=2)
+##        f_json.write(json_string + '\n')
+
+        f_json.close()
+
     def CalcAllFilesHash(self):
         for finf in self.files_info_list:
             finf[INFO_HASH] = self.CalcFileHash(finf)
+        self.SaveIndexingData()
 
     def CalcFileHash(self, file_info):
         hash_md5 = hashlib.md5()
