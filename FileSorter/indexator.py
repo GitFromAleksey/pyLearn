@@ -1,8 +1,21 @@
 import os
 import time
+import hashlib
 
 
-PATH = 'E:\базафото' # 'E:\НовыеФото\WhatsApp Video'
+PATH = 'E:\НовыеФото\АринаСадикНовыйГод12.2021' #'E:\базафото' #'E:\НовыеФото\WhatsApp Video'
+
+INFO_PATH          = 'Path'
+INFO_SIZE          = 'Size'
+INFO_NAME          = 'Name'
+INFO_FILE_EXT      = 'file_ext'
+INFO_PERMISSIONS   = 'Permissions'
+INFO_OWNER         = 'Owner'
+INFO_DEVICE        = 'Device'
+INFO_CREATED       = 'Created'
+INFO_LAST_MODIFIED = 'Last modified'
+INFO_LAST_ACCESSED = 'Last accessed'
+INFO_HASH          = 'Hash'
 
 ## -----------------------------------------------------------------------------
 class cIndexator:
@@ -10,40 +23,62 @@ class cIndexator:
 
     def __init__(self, directory):
         self.directory = directory
-
-        self.files_paths_list = self.GetAllFiles(self.directory)
-        
-
-        print(f'Find: {len(self.files_paths_list)} files.')
-
+        print(f'path: {self.directory}')
+        self.files_info_list = self.GetAllFilesInfo(self.directory)
+        self.CalcAllFilesHash()
+        print(f'file: {self.files_info_list}')
+        print(f'Find: {len(self.files_info_list)} files')
+        print(f'Size of files: {self.CalcSizeAllFiles(self.files_info_list)} bytes')
+        self.ext_dict = self.FindAllFilesExtentions(self.files_info_list)
         print(f'Find extensions:')
-        ext_dict = self.FindAllFilesExtentions(self.files_paths_list)
-        for key in ext_dict:
-            print(f'"{key}": {ext_dict[key]}')
-        
-    def GetAllFiles(self, directory):
+        for key in self.ext_dict:
+            print(f'"{key}": {self.ext_dict[key]}')
+
+    def CalcAllFilesHash(self):
+        for finf in self.files_info_list:
+            finf[INFO_HASH] = self.CalcFileHash(finf)
+
+    def CalcFileHash(self, file_info):
+        hash_md5 = hashlib.md5()
+        with open(file_info[INFO_PATH], 'rb') as f:
+            for chunk in iter(lambda: f.read(), b''):
+                hash_md5.update(chunk)
+        return hash_md5.hexdigest()
+    
+    def GetAllFilesInfo(self, directory):
         ''' возвращает список путей ко всем файлам во всех поддиректориях '''
-        files_paths_list = []
+        files_info_list = []
         
         for root, dirs, files in os.walk(directory):
             for name in files:
                 if '.git' in root:
                     continue
                 file_path = os.path.join(root, name)
-                files_paths_list.append(file_path)
+                files_info_list.append(self.GetFileInfo(file_path)) # TODO нужно возвращать этот парамерт
 
-        return files_paths_list
+        return files_info_list
 
     def FindAllFilesExtentions(self, files_paths_list):
+        ''' подсчитывает сколько есть разных расширений '''
         extensions_dict = {}
         for file_path in files_paths_list:
-            ext = self.GetFileInfo(file_path)['file_ext']
+            ext = file_path[INFO_FILE_EXT]
             if (ext in extensions_dict):
-                extensions_dict[ext] += 1
+                params = extensions_dict[ext]
+                params['count'] += 1
+                params['size'] += file_path[INFO_SIZE]
+                extensions_dict[ext] = params
             else:
-                extensions_dict[ext] = 1
+                extensions_dict[ext] = {'count': 1, 'size': 0}
 
         return extensions_dict
+
+    def CalcSizeAllFiles(self, files_paths_list, extention = ''):
+        size = 0
+        for fileinfo in files_paths_list:
+            size += fileinfo[INFO_SIZE]
+
+        return size
 
     def GetFileInfo(self, file_path):
         ''' возвращает информацию о файле '''
@@ -52,16 +87,17 @@ class cIndexator:
         file_ext = os.path.splitext(file_path)[1]
 
         info = {
-            'Path' : file_path,
-            'Size': stat_info.st_size,
-            'Name': file_name,
-            'file_ext' : file_ext,
-            'Permissions' : stat_info.st_mode,
-            'Owner' : stat_info.st_uid,
-            'Device' : stat_info.st_dev,
-            'Created' : stat_info.st_ctime,
-            'Last modified' : stat_info.st_mtime,
-            'Last accessed' : stat_info.st_atime
+            INFO_PATH          : file_path,
+            INFO_SIZE          : stat_info.st_size,
+            INFO_NAME          : file_name,
+            INFO_FILE_EXT      : file_ext,
+            INFO_PERMISSIONS   : stat_info.st_mode,
+            INFO_OWNER         : stat_info.st_uid,
+            INFO_DEVICE        : stat_info.st_dev,
+            INFO_CREATED       : stat_info.st_ctime,
+            INFO_LAST_MODIFIED : stat_info.st_mtime,
+            INFO_LAST_ACCESSED : stat_info.st_atime,
+            INFO_HASH          : None
         }
 
         return info
