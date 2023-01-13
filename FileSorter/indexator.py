@@ -25,26 +25,26 @@ class cIndexator:
         self.directory = directory
         print(f'path: {self.directory}')
         self.files_info_list = self.GetAllFilesInfo(self.directory)
-        self.CalcAllFilesHash()
-        print(f'file: {self.files_info_list}')
-        print(f'Find: {len(self.files_info_list)} files')
-        print(f'Size of files: {self.CalcSizeAllFiles(self.files_info_list)} bytes')
         self.ext_dict = self.FindAllFilesExtentions(self.files_info_list)
-        print(f'Find extensions:')
-        for key in self.ext_dict:
-            print(f'"{key}": {self.ext_dict[key]}')
+        self.CalcAllFilesHash()
 
     def SaveIndexingData(self):
+        print(f'Сохранение результатов.')
         fname = PATH + '\\' + 'index.json'
         f_json = open(fname,'w', encoding='utf-8')
         json_string = json.dump(self.files_info_list, f_json, ensure_ascii = False, indent=2)
-##        f_json.write(json_string + '\n')
-
         f_json.close()
 
     def CalcAllFilesHash(self):
+        print(f'Рассчёт хэш для всех файлов:')
+        count = len(self.files_info_list)
         for finf in self.files_info_list:
+            print(f'{115*" "}\r', end="")
+            print(f'Осталось {count} файлов. Рассчёт для {finf[INFO_NAME]}\r', end="")
+            count -= 1
             finf[INFO_HASH] = self.CalcFileHash(finf)
+        print(f'{115*" "}\r', end="")
+        print(f'Закончен рассчёт хэш для всех файлов.')
         self.SaveIndexingData()
 
     def CalcFileHash(self, file_info):
@@ -56,6 +56,7 @@ class cIndexator:
     
     def GetAllFilesInfo(self, directory):
         ''' возвращает список путей ко всем файлам во всех поддиректориях '''
+        print(f'Поиск всех файлов...')
         files_info_list = []
         
         for root, dirs, files in os.walk(directory):
@@ -64,11 +65,13 @@ class cIndexator:
                     continue
                 file_path = os.path.join(root, name)
                 files_info_list.append(self.GetFileInfo(file_path)) # TODO нужно возвращать этот парамерт
+        print(f'\rНайдено файлов: {len(files_info_list)}')
 
         return files_info_list
 
     def FindAllFilesExtentions(self, files_paths_list):
         ''' подсчитывает сколько есть разных расширений '''
+        print(f'Поиск типов файлов...')
         extensions_dict = {}
         for file_path in files_paths_list:
             ext = file_path[INFO_FILE_EXT]
@@ -79,7 +82,10 @@ class cIndexator:
                 extensions_dict[ext] = params
             else:
                 extensions_dict[ext] = {'count': 1, 'size': 0}
-
+        print(f'Найдено {len(extensions_dict)} типов файлов.')
+        print(f'Список найденных типов файлов:')
+        for key in extensions_dict:
+            print(f'    "{key}": {extensions_dict[key]}')
         return extensions_dict
 
     def CalcSizeAllFiles(self, files_paths_list, extention = ''):
@@ -117,7 +123,7 @@ def main():
 
     indexator = cIndexator(PATH)
     
-
+    input('Нажмите любую клавишу для выхода...')
 
 if __name__ == '__main__':
     main()
