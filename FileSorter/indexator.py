@@ -23,24 +23,36 @@ class cIndexator:
 
     def __init__(self, directory):
         self.directory = directory
+        self.FindIndexFile(directory)
         print(f'path: {self.directory}')
         self.files_info_list = self.GetAllFilesInfo(self.directory)
         self.ext_dict = self.FindAllFilesExtentions(self.files_info_list)
         self.CalcAllFilesHash()
 
+    def FindIndexFile(self, directory):
+        index_file = self.directory + '\\' + 'index.json'
+        try:
+            f_json = open(index_file,'r', encoding='utf-8')
+            data = json.load(f_json)
+            f_json.close()
+            print(f'Найден файл индексации каталога.')
+            return data
+        except:
+            return None
+
     def SaveIndexingData(self):
-        print(f'Сохранение результатов.')
-        fname = PATH + '\\' + 'index.json'
+        fname = self.directory + '\\' + 'index.json'
+        print(f'Сохранение результатов в файл "{fname}"')
         f_json = open(fname,'w', encoding='utf-8')
         json_string = json.dump(self.files_info_list, f_json, ensure_ascii = False, indent=2)
         f_json.close()
 
     def CalcAllFilesHash(self):
-        print(f'Рассчёт хэш для всех файлов:')
+        print(f'Рассчёт хэшей для всех файлов:')
         count = len(self.files_info_list)
         for finf in self.files_info_list:
             print(f'{115*" "}\r', end="")
-            print(f'Осталось {count} файлов. Рассчёт для {finf[INFO_NAME]}\r', end="")
+            print(f'Осталось {count} файлов. Рассчёт для "{finf[INFO_NAME]}"\r', end="")
             count -= 1
             finf[INFO_HASH] = self.CalcFileHash(finf)
         print(f'{115*" "}\r', end="")
@@ -123,7 +135,7 @@ def main():
 
     indexator = cIndexator(PATH)
     
-    input('Нажмите любую клавишу для выхода...')
+    input('Нажмите Enter для выхода...')
 
 if __name__ == '__main__':
     main()
