@@ -23,19 +23,98 @@ class cIndexator:
 
     def __init__(self, directory):
         self.directory = directory
-        self.FindIndexFile(directory)
         print(f'path: {self.directory}')
+        index_file_data = self.FindIndexFile(directory)
+        self.FindFileCopy(index_file_data)
+        
         self.files_info_list = self.GetAllFilesInfo(self.directory)
+        if index_file_data != None:
+            self.CompareFilesInfo(index_file_data, self.files_info_list)
         self.ext_dict = self.FindAllFilesExtentions(self.files_info_list)
         self.CalcAllFilesHash()
 
+    def FindFileCopy(self, files_list):
+        ''' Ищет копии файлов в списке по HASH '''
+        f_list = files_list.copy()
+        result = []
+        copy_size = 0
+        copy_count = 0
+        for cmp_fl in f_list:
+            f_list.remove(cmp_fl)
+            copy_list = []
+            copy_list.append(cmp_fl)
+            for fl in f_list:
+                if cmp_fl[INFO_HASH] == fl[INFO_HASH]:
+                    copy_list.append(fl)
+                    f_list.remove(fl)
+                    copy_size += fl[INFO_SIZE]
+                    copy_count += 1
+            if len(copy_list) > 1:
+                result.append(copy_list)
+
+        print(f'Количество копий файлов: {copy_count}')
+        print(f'Размер копий файлов: {copy_size} bytes')
+##        for cp_fls in result:
+##            _str = 20*'-' + '\n'
+##            for fl in cp_fls:
+##                _str += f'{fl[INFO_NAME]}; '
+##            print(_str)
+
+        return (result, copy_count, copy_size)
+        
+
+    def CompareFilesInfo(self, index_list, files_list):
+        ''' Сравнивает два списка файлов. Ищет новые, удаленные, перименованные. '''
+        if len(index_list) != len(files_list):
+            print(f'Изменилось количество файлов. Было {len(index_list)}, стало {len(files_list)}')
+
+        delete_files = []
+        for idx in index_list:
+            file = idx
+            for fl in files_list:
+                if idx[INFO_NAME] == fl[INFO_NAME]:
+                    file = None
+                    break
+            if file != None:
+                delete_files.append(file)
+
+        add_files = []
+        rename_files = []
+        for idx in files_list:
+            file = idx
+            for fl in index_list:
+                if idx[INFO_NAME] == fl[INFO_NAME]:
+                    file = None
+                    break
+            if file != None:
+                file[INFO_HASH] = self.CalcFileHash(file)
+                add_files.append(file)
+                for idxf in index_list:
+                    if file[INFO_HASH] == idxf[INFO_HASH]:
+                        rename_files.append(file)
+                        add_files.remove(file)
+
+        print(f'Удаленных файлов: {len(delete_files)}')
+        for delf in delete_files:
+            print(f'{delf[INFO_PATH]}')
+        print(f'Добавленных файлов: {len(add_files)}')
+        for addf in add_files:
+            print(f'{addf[INFO_PATH]}')
+        print(f'Переименованых файлов: {len(rename_files)}')
+        for renf in rename_files:
+            print(f'{renf[INFO_PATH]}')
+
+        return (delete_files, add_files, rename_files)
+        
+
     def FindIndexFile(self, directory):
+        ''' Ищет файл с информацией индексации файлов. '''
         index_file = self.directory + '\\' + 'index.json'
         try:
             f_json = open(index_file,'r', encoding='utf-8')
             data = json.load(f_json)
             f_json.close()
-            print(f'Найден файл индексации каталога.')
+            print(f'Найден файл индексации каталога: "index.json"')
             return data
         except:
             return None
