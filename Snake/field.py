@@ -1,7 +1,7 @@
 import os
 import random as rnd
 from enum import Enum
-
+from colorama import init, Fore, Back, Style
 
 ##------------------------------------------------------------------------------
 class cDimension(object):
@@ -62,7 +62,7 @@ class cObject(cDimension):
         super().__init__(name)
         super().SetDimension(1,1)
         self.position = cPosition()
-        self.simbol = '*'
+        self.simbol = Fore.GREEN+'*'+Style.RESET_ALL
 
     def SetSimbol(self, simb):
         self.simbol = simb
@@ -89,7 +89,7 @@ class cSnake():
         self.body_list = []
         self.head = cObject('Head')
         self.head.position.SetPosition(self.x_start_pos,self.y_start_pos)
-        self.head.SetSimbol('#')
+        self.head.SetSimbol(Fore.YELLOW+'#'+Style.RESET_ALL)
         self.AddBody(self.head)
         self.direction = cDirection.DIR_RIGHT
         self.x_max_pos = 40-1
@@ -242,11 +242,12 @@ class cField(cDimension):
     def __init__(self):
         print('Create cField')
         super().__init__('field')
+        init()
         self.default_width = (5*8)
         self.default_height = (7*2)
         super().SetDimension(self.default_width,self.default_height)
         self.apple = cObject('apple')
-        self.apple.SetSimbol('Q')
+        self.apple.SetSimbol(Style.BRIGHT+Fore.RED+'Q'+Style.RESET_ALL)
 
     def GenerateAnApplePosition(self):
         self.apple.position.GenerateRandomPosition(self.default_height, self.default_width)
