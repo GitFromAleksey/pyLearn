@@ -27,6 +27,8 @@ def directory_traversal(path):
     
     for root, dirs, files in os.walk(path):
         for name in files:
+            if '.git' in root:
+                continue
             file_path = os.path.join(root, name)
             all_files.append(file_path)
             file_count = file_count + 1

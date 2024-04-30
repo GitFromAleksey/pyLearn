@@ -23,7 +23,7 @@ class Block(threading.Thread):
         self.entry_add(self.win)
         self.tex_box_add(self.win)
         self.combobox_add(self.win)
-##        self.win.mainloop()
+        self.win.mainloop()
 
     def run(self):
         self.win.mainloop()
