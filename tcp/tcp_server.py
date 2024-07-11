@@ -1,7 +1,8 @@
 import time
 import socket
 import threading
-
+import re
+import subprocess
 
 HOST = '127.0.0.1'
 PORT = 8001 # https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
@@ -80,6 +81,27 @@ class Server():
                 print(f'Server Receiver except')
                 self.RemoveClient(client)
                 break
+
+    def GetIpAddressesOfThisPc():
+        ''' return all ip addresses on this pc '''
+        ip_string_pattern = re.compile('IPv4-')
+        ip_pattern = re.compile('[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')
+
+        result = subprocess.check_output('ipconfig', shell=True, text=True)
+        text_lines = result.splitlines()
+
+        ip_addresses = []
+
+        for line in text_lines:
+            ip_string_search_res = re.search(ip_string_pattern, line)
+            if ip_string_search_res:
+                ip_string = ip_string_search_res.string
+                ip_search_res = re.search(ip_pattern, ip_string)
+                if ip_search_res:
+                    ip_addresses.append(ip_search_res.group())
+
+        return ip_addresses
+
 
 def ReceiveEvebtCallBack(**kwargs):
     print(f'ReceiveEvebtCallBack: {kwargs}')

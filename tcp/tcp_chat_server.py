@@ -1,6 +1,7 @@
 from tcp_server import Server
-import time
-import json
+# import time
+# import json
+# import urllib
 
 
 HOST = '127.0.0.1'
@@ -12,7 +13,10 @@ def ReceiveEvebtCallBack(**kwargs):
     print(f'Client port: {kwargs["port"]}')
     print(f'Client message: {kwargs["message"]}')
 
+
 def main():
+
+    print(Server.GetIpAddressesOfThisPc())
 
     ip = input('Enter server IP:')
     if len(ip) == 0:
