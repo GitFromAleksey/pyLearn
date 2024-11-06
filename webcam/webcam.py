@@ -1,21 +1,21 @@
-import cv2.cv2 as cv
+import cv2 as cv
+import argparse
 
-print (cv.__version__)
+print (f'cv2 version: {cv.__version__}')
 
-cams_dict = {}
-for i in range(10):
-    cam = cv.VideoCapture(i)
-    if cam.isOpened():
-        cams_dict[i] = cam.getBackendName()
-        print(cam.getBackendName(), i)
 
-capture = cv.VideoCapture(0)
-print(type(capture))
-print('BackendName:', capture.getBackendName())
-print('isOpened:', capture.isOpened())
+def main():
+    cam = cv.VideoCapture(0)
+    while True: #cam.isOpened():
+        ret, img = cam.read()
+        if ret:
+            cv.imshow('Cam name: ' + cam.getBackendName(), img)
+            # cv.waitKey(0) # ожидание нажатия любой клавиши
+            # cv.imwrite('img.jpg', img)
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
+    cam.release()
+    cv.destroyAllWindows()
 
-ret, img = capture.read()
-cv.imshow('Cam name: ' + capture.getBackendName(), img)
-cv.imwrite('img.jpg',img)
-
-capture.release()
+if __name__ == '__main__':
+    main()
