@@ -20,6 +20,17 @@ class Camera:
         if self.cam:
             self.cam.release()
 
+    def GetImage(self):
+        cam = self.cam
+        if cam == None:
+            return None
+        if cam.isOpened():
+            ret, image = cam.read()
+            if ret:
+                return image
+            else:
+                return None
+
     def ShowImage(self) -> bool:
         cam = self.cam
         if cam == None:
@@ -27,41 +38,36 @@ class Camera:
         if cam.isOpened():
             ret, img = cam.read()
             if ret:
-                cv.imshow('Cam name: ' + cam.getBackendName(), img)
+                window_name = 'Cam name: ' + cam.getBackendName()
+                cv.imshow(window_name, img)
+                cv.waitKey(1)
+                # cv.destroyWindow(window_name) # так можно закрыть окно по имени
 
-    def SaveImage(self):
+    def SaveImage(self, file_name: str='img.jpg') -> None:
         cam = self.cam
         if cam == None:
             return False
+        image = self.GetImage()
         if cam.isOpened():
-            ret, img = cam.read()
+            ret, image = cam.read()
             if ret:
-                cv.imshow('Cam name: ' + cam.getBackendName(), img)
-                cv.imwrite('img.jpg', img)
+                cv.imwrite(filename=file_name, img=image)
 
 
 def main():
 
     cam = Camera()
     cam.CamOpen()
-    cam.SaveImage()
+
+    for i in range(10):
+        name = str(i) + '.jpg'
+        cam.ShowImage()
+        cam.SaveImage(name)
+        time.sleep(0.1)
+
     cam.CamClose()
 
-
     return
-
-    cam = cv.VideoCapture(0)
-    while True: #cam.isOpened():
-        ret, img = cam.read()
-        if ret:
-            cv.imshow('Cam name: ' + cam.getBackendName(), img)
-            # cv.waitKey(0) # ожидание нажатия любой клавиши
-            # cv.imwrite('img.jpg', img)
-            time.sleep(1)
-        if cv.waitKey(1) & 0xFF == ord('q'):
-            break
-    cam.release()
-    cv.destroyAllWindows()
 
 if __name__ == '__main__':
     main()
