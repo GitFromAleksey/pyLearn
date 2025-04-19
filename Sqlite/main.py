@@ -47,6 +47,8 @@ class DbHelper:
         self.cursor.execute('SELECT name FROM sqlite_master WHERE type="table"')
         for name in self.cursor.fetchall():
             res.append(name[0])
+        if len(res) == 0:
+            return None
         return res
 
     def GetTableColumnsInfo(self, table_name:str=''):
@@ -67,6 +69,7 @@ class DbHelper:
 
     def TableCreate(self, table_name: str = ''):
         ''' создаёт новую таблицу '''
+
         if table_name == '':
             return
         self.cursor.execute('''
@@ -76,15 +79,15 @@ class DbHelper:
         ''')
         self.db.commit()
 
-    def TableDrop(self, table_name:str=''):
+    def TableDrop(self, table_name:str='') -> bool:
         ''' удаляет таблицу '''
         if table_name == '':
-            return
+            return False
         if table_name in self.GetTablesNames():
             self.cursor.execute('DROP TABLE '+table_name)
-            print('drop ok')
+            return True
         else:
-            print('drop error')
+            return False
 
     def AddColumn(self, table_name: str='', column_name:str='', ctype: ColumnType=ColumnType.text):
         ''' добавляет новую колонку в таблицу '''
@@ -94,78 +97,85 @@ class DbHelper:
             return
         self.cursor.execute(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {ctype}')
 
-    def InsertData(self, table_name:str=''):
+    def InsertData(self, table_name: str='', data: dict=None) -> bool:
         ''' запись/вставка данных '''
-#        Table: Users3
-#            Title: id
-#            Title: new_column
-#            Title: new_column2
-        request = f'''
-        INSERT INTO Users3
-        (id, new_column, new_column2)
-        VALUES (4, 'data0', 'data1') '''
-        print(request)
+        if table_name == '' or data == None:
+            return False
+        columns = ''
+        values = ''
+        for key in data.keys():
+            columns += key + ','
+            if type(data[key]) == str:
+                values += '"'+str(data[key])+'"' + ','
+            else:
+                values += str(data[key]) + ','
+        columns = columns.strip(',')
+        values = values.strip(',')
+        request = f''' INSERT INTO {table_name} ({columns}) VALUES ({values}) '''
         self.cursor.execute(request)
         self.db.commit()
-#        self.cursor.execute('INSERT INTO Users (username, email, age) VALUES (?, ?, ?)', ('newuser', 'newuser@example.com', 28))
-        pass
+        return True
 
-    def ReadAllDataFromTable(self, table_name:str=''):
+    def ReadAllDataFromTable(self, table_name: str=''):
         ''' отдаёт все данные из таблицы '''
-        request = f'''SELECT * FROM Users3'''
-        print(request)
+        if table_name == '':
+            return
+        res = {}
+        title = []
+        for info in self.GetTableColumnsInfo(table_name=table_name):
+            title.append(info['name'])
+        request = f'''SELECT * FROM {table_name}'''
         self.cursor.execute(request)
-        res = self.cursor.fetchall()
-        print(res)
+        for data in self.cursor.fetchall():
+            index = 0
+            for d in data:
+                column_name = title[index]
+                if res.get(column_name) == None:
+                    res[column_name] = []    
+                res[column_name].append(d)
+                index += 1
+        return res
 
 def main():
+
+    table_name = 'TABLE_NAME'
+    column_int  = 'column_int'
+    column_text = 'column_text'
+    column_real = 'column_real'
+    column_blob = 'column_blob'
 
     db_helper = DbHelper()
     db_helper = DbHelper(DB_FILE)
 
-    for table_name in db_helper.GetTablesNames():
-        print(f'Table: {table_name}')
-        for title in db_helper.GetTableColumnsInfo(table_name):
-            print(f'Title: {title["name"]}')
+    tables_names = db_helper.GetTablesNames()
+    if tables_names == None:
 
-#    db_helper.InsertData()
-    db_helper.ReadAllDataFromTable()
-#    db_helper.AddColumn('Users3','new_column2',ColumnType.text.value)
-#    db_helper.TableDrop('Users3')
-#    db_helper.TableCreate('Users3')
+        print(f'Создание таблицы с именем: {table_name}')
 
-    return
+        db_helper.TableCreate(table_name)
+        db_helper.AddColumn(table_name, column_int,  ColumnType.integer.value)
+        db_helper.AddColumn(table_name, column_text, ColumnType.text.value)
+        db_helper.AddColumn(table_name, column_real, ColumnType.real.value)
+        db_helper.AddColumn(table_name, column_blob, ColumnType.blob.value)
 
-    db = sqlite3.connect(DB_FILE) # установка соединения с базой
-    c = db.cursor() # получение курсора
-    # Методы курсора
-    # execute(), executemany() - методы выполнения SQL
-    # fetchone(), fetchall() - методы получения результатов
+        print(f'Добавление данных в таблицу: {table_name}')
 
-    # создание таблицы "Users"
-    c.execute('''
-    CREATE TABLE IF NOT EXISTS Users (
-    id INTEGER PRIMARY KEY,
-    username TEXT NOT NULL,
-    email TEXT NOT NULL,
-    age INTEGER
-    )
-    ''')
-    # NULL: значение NULL
-    # INTEGER: Целые числа.
-    # TEXT: Текстовые данные.
-    # REAL: Числа с плавающей запятой.
-    # BLOB: Двоичные данные.
+        data = { column_int: 1, column_text: 'text', column_real: 3.14, column_blob: 1 }
+        db_helper.InsertData(table_name=table_name, data=data)
+        data = { column_int: 2, column_text: 'text1', column_real: 3.1415, column_blob: 2 }
+        db_helper.InsertData(table_name=table_name, data=data)
+        data = { column_int: 3, column_text: 'text2', column_real: 3.1415926, column_blob: 3 }
+        db_helper.InsertData(table_name=table_name, data=data)
 
-#    c.execute('PRAGMA table_info(Users)')
-    c.execute('SELECT name FROM sqlite_master WHERE type="table";')
-    res = c.fetchall()
+    tables_names = db_helper.GetTablesNames()
+    print(f'Чтение списка таблиц из базы данных: {tables_names}')
 
-    print(res)
-    db.commit() # сохранение изменений в базе
+    print(f'Чтение данных из таблицы: {table_name}')
+    table_content = db_helper.ReadAllDataFromTable(table_name=table_name)
+    print(table_content)
+    print(f'Удаление таблицы: {table_name}')
+    db_helper.TableDrop(table_name=table_name)
 
-    db.close() # закрытие соединения с базой
-    pass
 
 if __name__ == '__main__':
     main()
